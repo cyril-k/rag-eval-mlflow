@@ -111,6 +111,6 @@ Regarding `latency`, it makes more sense to use `p90` aggregation (90% of reques
 
 Evaluation of retriever is more straightforward than generator as it could be done with purely statistical metrics (no need to usee LLM). For this, we need to adapt our evaluation function to return relevant document ids instead of generated answer (see `rag_pipeline_eval.ipynb`). MLFlow provides metrics at variable retriever `k` which we are going to use as our main variable:
 
-![retriever metrics](image.png)
+![retriever metrics](assets/retriever.png)
 
 It seems that increasing `k` over 3 does not result in improvement of Recall or NDCG and only decreases the precsision as it dilutes the relevant context supplied by retriever.
