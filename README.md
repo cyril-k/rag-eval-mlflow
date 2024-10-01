@@ -23,7 +23,7 @@ The pipeline architecture is as follows:
 
 There are 2 main parts to evaluate:
 ### Generator
-This part encompasses the LLM alongside with it inference parameters, prompt template and serving framework choice. In this excercise, we are going to evaluate `generator` part with 4 metrics:
+This part encompasses the LLM alongside with its inference parameters, prompt template and serving framework choice. In this excercise, we are going to evaluate `generator` part with 4 metrics:
 
 1. **Robustness:** this metric will help us measure how robust is the LLM to attempts to coerce it to innapropriate behaviour (unsafe and off-topic requests, prompt injection, etc.). We will perform evaluation with 3 prompt templates with varying degree of supposed control over generation.
 2. **Faithfulness:** this metric helps to evaluate how faithfull are the LLM outputs in relation to the context accessed by the LLM. Essentially it helps to evaluate the susceptibility of the LLM to hallucinate and is especcially important for RAG use case.
@@ -55,7 +55,7 @@ In the end, we filter 25 dataset items which score 5/5 on all Prometheus 2 evalu
 
 ### 2. Prepare the metrics
 
-3 out of 4 metrics for evaluating the generator use *LLM-as-a-judge* whose role in our case is fullfilled by the Prometheus 2 LL ([see the original article for reference](https://arxiv.org/pdf/2405.01535)). The authors of the original paper published a corresponding python library to use with their LLM, `prometheus_eval`. To integrate this in MLFlow metrics, it is necessary to create a wrapper which utilizes `make_metric()` API from MLFlow. See `custom_metric.py` for `make_prometheus_metric` wrapper implementation.
+3 out of 4 metrics for evaluating the generator use *LLM-as-a-judge* whose role in our case is fullfilled by the Prometheus 2 LLM ([see the original article for reference](https://arxiv.org/pdf/2405.01535)). The authors of the original paper published a corresponding python library to use with their LLM, `prometheus_eval`. To integrate this in MLFlow metrics, it is necessary to create a wrapper which utilizes `make_metric()` API from MLFlow. See `custom_metric.py` for `make_prometheus_metric` wrapper implementation.
 
 To use `make_prometheus_metric` wrapper, we need to supply the following:
 - LLM client (`CustomLiteLLM` or `LiteLLM`);
@@ -72,7 +72,7 @@ To use `make_prometheus_metric` wrapper, we need to supply the following:
 
 See `rag_pipeline_eval.ipynb` notebook for implementation details.
 
-To perform this evaluation, we compose 3 prompt template going from the simplest to the most elaborate (see `rag_pipeline_eval.ipynb`). We evaluate the following LLMs with these 3 prompts:
+To perform this evaluation, we compose 3 prompt templates, going from the simplest to the most elaborate (see `rag_pipeline_eval.ipynb`). We evaluate the following LLMs with these 3 prompts:
 ```python
 models_to_evaluate = [
     "meta-llama/Meta-Llama-3.1-8B-Instruct",
@@ -93,7 +93,7 @@ If we export this table as `csv` and plot it as a bar graph we get the following
 
 ![eval results plot](assets/robustness.png)
 
-Unsurprisingly, Meta's models show better compliance with safe behaviour compared to those from Mistral since Llamas undergo a more strict alignment procedure.
+Unsurprisingly, Meta's models show better compliance with safe behaviour compared to those from Mistral since Llamas undergo a more strict post-training alignment procedure.
 
 ### 4. Evaluate RAG with golden dataset
 
@@ -114,3 +114,9 @@ Evaluation of retriever is more straightforward than generator as it could be do
 ![retriever metrics](assets/retriever.png)
 
 It seems that increasing `k` over 3 does not result in improvement of Recall or NDCG and only decreases the precsision as it dilutes the relevant context supplied by retriever.
+
+## Conclusion
+
+It becomes increasingly important to invest time and effort into LLMOps, especially with fast growth of accessibility of LLM inference we are experiencing these days. Due to their non-deterministic nature, LLMs pose some challenges to evaluate and require particular attention when engineering evaluation metrics. Use cases such as RAG especially require meticulous evaluation procedure since a RAG pipeline has quite a lot of moving parts, each of them contributing to the final result. In addition to classic precision/recall oriented metrics, additional criteria are of concerns, such as latency and cost per token. 
+
+MLFlow provides a solid framework including some prebuilt metrics which may serve as an inspiration of a ML Engineer looking to craft their own use-case specific evaluation workflow. It also provides an easy-to-use aggregation platform to keep track of all your experiments and evaluation runs.
