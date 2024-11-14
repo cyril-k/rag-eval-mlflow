@@ -23,6 +23,8 @@ MLFLOW_TRACKING_USERNAME=username
 MLFLOW_TRACKING_PASSWORD=password
 ```
 
+**NOTE:** You will need to download the Nebius cetrificate (`CA.pem`) and place it in your working directory to use managed MLFlow tracking server.
+
 ## RAG pipeline
 The pipeline architecture is as follows, it is inspired by by [Langchain's example](https://python.langchain.com/docs/tutorials/rag/#preview):
 
